@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Plugin Name: Onboarding ISCEB
  */
@@ -15,6 +14,22 @@ function afunction(){
 }
 
 add_action( 'admin_menu', 'afunction' );
+
+// add_action('admin_init', 'myplugin_admin_init');
+
+function add_my_plugin_stylesheet() {
+    // wp_register_style('mypluginstylesheet', '/wp-content/plugins/plugin-onboarding/onboarding.css');
+    // wp_enqueue_style('mypluginstylesheet');
+    wp_register_style( 'namespace', '/wp-content/plugins/plugin-onboarding/onboarding.css' );
+    wp_enqueue_style( 'namespace' );
+    wp_register_style( 'namespace', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css' );
+    wp_enqueue_style( 'namespace' );
+}
+
+add_action('wp_enqueue_scripts', 'add_my_plugin_stylesheet' );
+
+
+
 
 function wporg_custom_post_type() {
     register_post_type('wp_stages',
@@ -45,7 +60,6 @@ function wpdocs_create_new_taxonomy() {
         'show_ui'           => true,
     );
     register_taxonomy('flow_taxonomy', array('wp_stages'), $args);
-
 }
 add_action('init','wpdocs_create_new_taxonomy', 0);
 
@@ -61,15 +75,45 @@ function flow_function($atts) {
                 'terms'    => $atts['name'],
             ),
         ),
+        'orderby' => 'CAST(title as CHAR)',
+        'order' => 'ASC',
+        // array('title' => 'DSC'),
     );
     $the_query = new WP_Query( $args );
     if ( $the_query->have_posts() ) {
-        echo "<ul class='onboarding_list' id='onboarding_list_{$atts['name']}'>";
+        echo "<div class='onboarding_list' id='onboarding_list_{$atts['name']}'>";
+            echo'<div class="row">
+                    <div class="col_md_12">
+                        <div class="main_timeline">';
         while ( $the_query->have_posts() ) {
             $the_query->the_post();
-            echo '<li>' . get_the_title() . '</li>';
+            echo '
+                            <div class="timeline" id="stage1">
+                                <div class="timeline_content">
+                                    <span class="timeline_stage">'. get_post_meta( get_the_ID() , 'subtitle', true ) .' </span>
+                                        <div class="timeline_icon">
+                                            <i class="fa fa-rocket"></i>
+                                        </div>
+                                    <div class="content">
+                                        <a href=" "> <h3 class="title">' . get_the_title() . '</h3> </a>
+                                        <p class="description">
+                                            
+                                in this website design tutorial i will guide you that how to create the amazing timeline design using the modern technologies cush as html 5 css 3 and no JavaScript. After
+                                Completing this website design tutorial you will be having all the great skills for website design in no time. Hope this website design and web development tutorial will
+                                
+                                        
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                              
+                      
+        ';
         }
-        echo '</ul>';
+        echo '          </div>       
+                    </div>    
+                </div>  ';
+        echo '</div>';
     } else {
         // no posts found
         echo "<h1>No Flows</h1>";
@@ -78,7 +122,4 @@ function flow_function($atts) {
     wp_reset_postdata();
 }
 
-
-?>
-
-
+/* Leave open*/
